@@ -1,0 +1,127 @@
+//STACK structure: ADITI
+#include<stdio.h>
+#define max 10
+struct stack
+{
+	int item[max];
+	int top;
+}stack;
+void conv(char infix[],char postfix[]);
+int empty(struct stack s);
+void push(struct stack *s,char);
+char pop(struct stack *s);
+int isopr(char);
+int prcd(char);
+int main()
+{
+	char infix[max],postfix[max];
+	printf("\n Enter an infix expression :  ");
+	gets(infix);
+	conv(infix,postfix);
+	printf("\nPostfix expression:");
+	puts(postfix);
+	return 0;
+}
+char peep(struct stack s)
+{
+	if(s.top!=-1);
+	return s.item[s.top];
+}
+void conv(char infix[],char postfix[])
+{
+	int i=0,j=0;
+	char symb,topsymb;
+	struct stack s;
+	s.top=-1;
+	while(infix[i]!='\0')
+	{
+		symb=infix[i]; 
+		if(symb=='(')
+		  push(&s,symb);
+		else if(isopr(symb))
+		  postfix[j++]=symb;
+		else if(symb=='$')
+		{
+			while((!empty(s))&&((prcd(peep(s))) > prcd(symb)))
+			{
+				topsymb=pop(&s);
+				postfix[j++]=topsymb;
+			}
+			if (empty(s)||symb!=')')
+			 push(&s,symb);
+			else
+			 topsymb=pop(&s);
+	}
+		else
+		{
+			while((!empty(s))&&((prcd(peep(s))) >= prcd(symb)))
+			{
+				topsymb=pop(&s);
+				postfix[j++]=topsymb;
+			}
+			if (empty(s)||symb!=')')
+			 push(&s,symb);
+			else
+			 topsymb=pop(&s);
+		}
+		i++;	
+	}
+	while(!empty(s))
+	{
+		if(topsymb!='('||topsymb!=')')
+		{ topsymb=pop(&s);
+		 postfix[j++]=topsymb;
+	}
+	}
+	postfix[j]='\0';
+	
+}
+int empty(struct stack s)
+{
+	if(s.top==-1)
+	  return 1;
+	else
+	  return 0;	  	  
+}
+void push(struct stack *s,char x)
+{
+	s->top++;
+	s->item[s->top]=x;
+}
+char pop(struct stack *st)
+{
+	char x;
+	if(empty(*st))
+	{
+	  printf("\n Stack is underflow");
+	  x='0';
+	}
+	else
+	{
+		x=st->item[st->top];
+		st->top=st->top-1;
+	}return x;	  
+}
+int isopr(char symb)
+{
+	if((symb>='A'&&symb<='z')||(symb>='a'&&symb<='z'))
+	return 1;
+	else
+	return 0;
+}
+int prcd(char symb)
+{
+	int p;
+	switch(symb)
+	{
+		case '$':p=3;break;
+		case '/':
+		case '*':p=2;break;
+		case '+':
+		case '-':p=1;break;
+		case ')':p=0;break;
+		case '(':p=-1;break;
+	}
+	return (p);
+
+}
